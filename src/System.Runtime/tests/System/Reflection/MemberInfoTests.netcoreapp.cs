@@ -19,7 +19,7 @@ namespace System.Reflection.Tests
             Type tGeneric = typeof(GenericTestClass<>);
             IEnumerable<MethodInfo> methodsOnGeneric = tGeneric.GetTypeInfo().GetDeclaredMethods(nameof(GenericTestClass<object>.Foo));
 
-            List <Type> typeInsts = new List<Type>();
+            List<Type> typeInsts = new List<Type>();
             foreach (MethodInfo method in methodsOnGeneric)
             {
                 Assert.True(method.GetParameters().Length == 1);
@@ -188,6 +188,7 @@ namespace System.Reflection.Tests
         }
 
         [Fact]
+        [OuterLoop] // Time-consuming.
         public static void HasSameMetadataDefinitionAs_CrossAssembly()
         {
             // Make sure that identical tokens in different assemblies don't confuse the api.
@@ -200,30 +201,26 @@ namespace System.Reflection.Tests
             }
         }
 
-        [Fact]
-        public static void HasSameMetadataDefinitionAs_Negative_NonRuntimeType()
+        [Theory]
+        [MemberData(nameof(NegativeTypeData))]
+        public static void HasSameMetadataDefinitionAs_Negative_NonRuntimeType(Type type)
         {
             Type mockType = new MockType();
-            foreach (Type type in NegativeTypeData)
+            Assert.False(type.HasSameMetadataDefinitionAs(mockType));
+            foreach (MemberInfo member in type.GenerateTestMemberList())
             {
-                Assert.False(type.HasSameMetadataDefinitionAs(mockType));
-                foreach (MemberInfo member in type.GenerateTestMemberList())
-                {
-                    Assert.False(member.HasSameMetadataDefinitionAs(mockType));
-                }
+                Assert.False(member.HasSameMetadataDefinitionAs(mockType));
             }
         }
 
-        [Fact]
-        public static void HasSameMetadataDefinitionAs_Negative_Null()
+        [Theory]
+        [MemberData(nameof(NegativeTypeData))]
+        public static void HasSameMetadataDefinitionAs_Negative_Null(Type type)
         {
-            foreach (Type type in NegativeTypeData)
+            AssertExtensions.Throws<ArgumentNullException>("other", () => type.HasSameMetadataDefinitionAs(null));
+            foreach (MemberInfo member in type.GenerateTestMemberList())
             {
-                Assert.Throws<ArgumentNullException>(() => type.HasSameMetadataDefinitionAs(null));
-                foreach (MemberInfo member in type.GenerateTestMemberList())
-                {
-                    Assert.Throws<ArgumentNullException>(() => member.HasSameMetadataDefinitionAs(null));
-                }
+                AssertExtensions.Throws<ArgumentNullException>("other", () => member.HasSameMetadataDefinitionAs(null));
             }
         }
 
