@@ -7,6 +7,8 @@ using System.Collections.Generic;
 
 using Xunit;
 
+#pragma warning disable 0649 // Yes, we know - test class have fields we don't assign to.
+
 namespace System.Reflection.Tests
 {
     public static class MemberInfoNetCoreAppTests
