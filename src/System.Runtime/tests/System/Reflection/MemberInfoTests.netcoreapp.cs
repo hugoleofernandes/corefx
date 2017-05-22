@@ -284,13 +284,12 @@ namespace System.Reflection.Tests
                 typeof(double).MakePointerType(),
             };
 
-            foreach (Type t1 in types)
-            {
-                foreach (Type t2 in types)
+            Assert.All(types,
+                delegate (Type t1)
                 {
-                    Assert.True(t1.HasSameMetadataDefinitionAs(t2));
+                    Assert.All(types, t2 => Assert.True(t1.HasSameMetadataDefinitionAs(t2)));
                 }
-            }
+            );
         }
 
         [Fact]
