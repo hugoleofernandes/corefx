@@ -320,16 +320,20 @@ namespace System.Reflection.Tests
                 }
             }
 
-            foreach (MemberInfo member1 in members)
-            {
-                foreach (MemberInfo member2 in members)
+            Assert.All(members,
+                delegate (MemberInfo member1)
                 {
-                    if (member1.MemberType == member2.MemberType)
-                        Assert.True(member1.HasSameMetadataDefinitionAs(member2));
-                    else
-                        Assert.False(member1.HasSameMetadataDefinitionAs(member2));
+                    Assert.All(members,
+                        delegate (MemberInfo member2)
+                        {
+                            if (member1.MemberType == member2.MemberType)
+                                Assert.True(member1.HasSameMetadataDefinitionAs(member2));
+                            else
+                                Assert.False(member1.HasSameMetadataDefinitionAs(member2));
+                        }
+                    );
                 }
-            }
+            );
         }
 
         [Fact]
