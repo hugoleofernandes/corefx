@@ -32,36 +32,47 @@ namespace System.Reflection.Tests
 
         private static void CrossTestHasSameMethodDefinitionAs(params Type[] types)
         {
+            Assert.All(types,
+                delegate (Type type1)
+                {
+                    Assert.All(type1.GenerateTestMemberList(),
+                        delegate (MemberInfo m1)
+                        {
+                            MarkerAttribute mark1 = m1.GetCustomAttribute<MarkerAttribute>();
+                            if (mark1 == null)
+                                return;
+
+                            Assert.All(types,
+                                delegate (Type type2)
+                                {
+                                    Assert.All(type2.GenerateTestMemberList(),
+                                        delegate (MemberInfo m2)
+                                        {
+                                            MarkerAttribute mark2 = m2.GetCustomAttribute<MarkerAttribute>();
+                                            if (mark2 == null)
+                                                return;
+
+                                            bool hasSameMetadata = m1.HasSameMetadataDefinitionAs(m2);
+                                            Assert.Equal(hasSameMetadata, m2.HasSameMetadataDefinitionAs(m1));
+
+                                            if (hasSameMetadata)
+                                            {
+                                                Assert.Equal(mark1.Mark, mark2.Mark);
+                                            }
+                                            else
+                                            {
+                                                Assert.NotEqual(mark1.Mark, mark2.Mark);
+                                            }
+                                        }
+                                    );
+                                }
+                            );
+                        }
+                    );
+                }
+            );
             foreach (Type type1 in types)
             {
-                foreach (MemberInfo m1 in type1.GenerateTestMemberList())
-                {
-                    MarkerAttribute mark1 = m1.GetCustomAttribute<MarkerAttribute>();
-                    if (mark1 == null)
-                        continue;
-
-                    foreach (Type type2 in types)
-                    {
-                        foreach (MemberInfo m2 in type2.GenerateTestMemberList())
-                        {
-                            MarkerAttribute mark2 = m2.GetCustomAttribute<MarkerAttribute>();
-                            if (mark2 == null)
-                                continue;
-
-                            bool hasSameMetadata = m1.HasSameMetadataDefinitionAs(m2);
-                            Assert.Equal(hasSameMetadata, m2.HasSameMetadataDefinitionAs(m1));
-
-                            if (hasSameMetadata)
-                            {
-                                Assert.Equal(mark1.Mark, mark2.Mark);
-                            }
-                            else
-                            {
-                                Assert.NotEqual(mark1.Mark, mark2.Mark);
-                            }
-                        }
-                    }
-                }
             }
         }
 
