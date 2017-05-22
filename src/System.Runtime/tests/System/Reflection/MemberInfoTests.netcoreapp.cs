@@ -207,10 +207,12 @@ namespace System.Reflection.Tests
         {
             Type mockType = new MockType();
             Assert.False(type.HasSameMetadataDefinitionAs(mockType));
-            foreach (MemberInfo member in type.GenerateTestMemberList())
-            {
-                Assert.False(member.HasSameMetadataDefinitionAs(mockType));
-            }
+            Assert.All(type.GenerateTestMemberList(),
+                delegate (MemberInfo member)
+                {
+                    Assert.False(member.HasSameMetadataDefinitionAs(mockType));
+                }
+            );
         }
 
         [Theory]
@@ -218,10 +220,12 @@ namespace System.Reflection.Tests
         public static void HasSameMetadataDefinitionAs_Negative_Null(Type type)
         {
             AssertExtensions.Throws<ArgumentNullException>("other", () => type.HasSameMetadataDefinitionAs(null));
-            foreach (MemberInfo member in type.GenerateTestMemberList())
-            {
-                AssertExtensions.Throws<ArgumentNullException>("other", () => member.HasSameMetadataDefinitionAs(null));
-            }
+            Assert.All(type.GenerateTestMemberList(),
+                delegate (MemberInfo member)
+                {
+                    AssertExtensions.Throws<ArgumentNullException>("other", () => member.HasSameMetadataDefinitionAs(null));
+                }
+            );
         }
 
         public static IEnumerable<Type> NegativeTypeData
