@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Linq;
+using System.Diagnostics;
 using System.Collections.Generic;
 
 using Xunit;
@@ -22,7 +23,7 @@ namespace System.Reflection.Tests
             List<Type> typeInsts = new List<Type>();
             foreach (MethodInfo method in methodsOnGeneric)
             {
-                Assert.True(method.GetParameters().Length == 1);
+                Debug.Assert(method.GetParameters().Length == 1);
                 Type parameterType = method.GetParameters()[0].ParameterType;
                 typeInsts.Add(tGeneric.MakeGenericType(parameterType));
             }
@@ -71,9 +72,6 @@ namespace System.Reflection.Tests
                     );
                 }
             );
-            foreach (Type type1 in types)
-            {
-            }
         }
 
         [Fact]
