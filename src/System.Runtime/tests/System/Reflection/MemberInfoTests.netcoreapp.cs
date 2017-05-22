@@ -228,7 +228,8 @@ namespace System.Reflection.Tests
             );
         }
 
-        public static IEnumerable<Type> NegativeTypeData
+        public static IEnumerable<object[]> NegativeTypeData => NegativeTypeDataRaw.Select(t => new object[] { t });
+        private static IEnumerable<Type> NegativeTypeDataRaw
         {
             get
             {
