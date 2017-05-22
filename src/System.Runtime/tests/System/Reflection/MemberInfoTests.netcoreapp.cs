@@ -160,13 +160,17 @@ namespace System.Reflection.Tests
             Type twin1 = typeof(Twin1);
             Type twin2 = typeof(Twin2);
 
-            foreach (MemberInfo m1 in twin1.GenerateTestMemberList())
-            {
-                foreach (MemberInfo m2 in twin2.GenerateTestMemberList())
+            Assert.All(twin1.GenerateTestMemberList(),
+                delegate (MemberInfo m1)
                 {
-                    Assert.False(m1.HasSameMetadataDefinitionAs(m2));
+                    Assert.All(twin2.GenerateTestMemberList(),
+                        delegate (MemberInfo m2)
+                        {
+                            Assert.False(m1.HasSameMetadataDefinitionAs(m2));
+                        }
+                     );
                 }
-            }
+            );
         }
 
         private class Twin1
