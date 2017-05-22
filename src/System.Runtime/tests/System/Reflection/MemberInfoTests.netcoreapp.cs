@@ -84,12 +84,14 @@ namespace System.Reflection.Tests
             IEnumerable<MemberInfo> baseMembers = tBase.GetMembers(bf).Where(m => m.IsDefined(typeof(MarkerAttribute)));
             baseMembers = baseMembers.Where(bm => !(bm is ConstructorInfo)); // Constructors cannot be seen from derived types.
             IEnumerable<MemberInfo> derivedMembers = tDerived.GetMembers(bf).Where(m => m.IsDefined(typeof(MarkerAttribute)));
-            foreach (MemberInfo baseMember in baseMembers)
-            {
-                MemberInfo matchingDerivedMember = derivedMembers.Single(dm => dm.HasSameMarkAs(baseMember));
-                Assert.True(baseMember.HasSameMetadataDefinitionAs(matchingDerivedMember));
-                Assert.True(matchingDerivedMember.HasSameMetadataDefinitionAs(matchingDerivedMember));
-            }
+            Assert.All(baseMembers,
+                delegate (MemberInfo baseMember)
+                {
+                    MemberInfo matchingDerivedMember = derivedMembers.Single(dm => dm.HasSameMarkAs(baseMember));
+                    Assert.True(baseMember.HasSameMetadataDefinitionAs(matchingDerivedMember));
+                    Assert.True(matchingDerivedMember.HasSameMetadataDefinitionAs(matchingDerivedMember));
+                }
+            );
         }
 
         [Fact]
