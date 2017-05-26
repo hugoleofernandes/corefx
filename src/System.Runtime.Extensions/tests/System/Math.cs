@@ -6,8 +6,6 @@ using Xunit;
 using Xunit.Sdk;
 using System.Reflection;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace System.Tests
 {
@@ -1323,8 +1321,12 @@ namespace System.Tests
 
         [Theory]
         [InlineData(1, -0.0, -3.0, double.NegativeInfinity, 0.0)]
-        public static void BugRepro(int index, double x, double y, double expectedResult, double allowedVariance)
+        public static void BugReproForTFS442050(int index, double x, double y, double expectedResult, double allowedVariance)
         {
+            //
+            // This is not a real test - it simply here to assist in repro'ing TFS442050 as it doesn't seem to want to repro in smaller test cases.
+            // Once it's fixed, this "test" can be deleted.
+            // 
             MethodInfo method = (MethodInfo)(MethodBase.GetCurrentMethod());
             foreach (CustomAttributeData cad in method.CustomAttributes)
             {
@@ -1338,31 +1340,32 @@ namespace System.Tests
                 unsafe
                 {
                     shouldBeNegativeZeroBits = *((ulong*)&shouldBeNegativeZero);
-                    if (shouldBeNegativeZeroBits != 0x8000000000000000LU)
-                    {
-                        Console.WriteLine("! HEY!");
-                    }
+                }
+                if (shouldBeNegativeZeroBits != 0x8000000000000000LU)
+                {
+                    Console.WriteLine("! HEY!");
                 }
             }
-            Console.WriteLine("! Bug repro done.");
         }
 
         [Theory]
+        [ActiveIssue("TFS 442050 - -0.0 transformed to +0.0 when read from native custom attribute metadata.", TargetFrameworkMonikers.UapAot)]
         [InlineData(0,  double.NegativeInfinity, -1.0,                     -0.0,                     0.0)]
         [InlineData(1, -0.0,                     -3.0,                      double.NegativeInfinity, 0.0)]
         [InlineData(2, -0.0,                     -1.0,                      double.NegativeInfinity, 0.0)]
-        public static void Pow_AotMetadataBug(int index, double x, double y, double expectedResult, double allowedVariance)
+        public static void Pow_BlockedDueToTFS442050(int index, double x, double y, double expectedResult, double allowedVariance)
         {
             AssertEqual(expectedResult, Math.Pow(x, y), allowedVariance);
         }
 
         [Theory]
+        [ActiveIssue("TFS 442050 - -0.0 transformed to +0.0 when read from native custom attribute metadata.", TargetFrameworkMonikers.UapAot)]
         [InlineData(-1.0, double.PositiveInfinity, -0.0, 0.0)]
         [InlineData(-0.0, double.NegativeInfinity, -3.1415926535897932, CrossPlatformMachineEpsilon * 10)]    // expected: -(pi)
         [InlineData(-0.0, -1.0, -3.1415926535897932, CrossPlatformMachineEpsilon * 10)]    // expected: -(pi)
         [InlineData(-0.0, -0.0, -3.1415926535897932, CrossPlatformMachineEpsilon * 10)]    // expected: -(pi)
         [InlineData(0.0, -0.0, 3.1415926535897932, CrossPlatformMachineEpsilon * 10)]     // expected:  (pi)
-        public static void Atan2_AotMetadataBug(double y, double x, double expectedResult, double allowedVariance)
+        public static void Atan2_BlockedDueToTFS442050(double y, double x, double expectedResult, double allowedVariance)
         {
             AssertEqual(expectedResult, Math.Atan2(y, x), allowedVariance);
         }
