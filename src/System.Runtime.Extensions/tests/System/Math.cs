@@ -1311,10 +1311,10 @@ namespace System.Tests
 
         [Theory]
         [ActiveIssue("TFS 442050 - Custom Attribute deduplication doesn't differentiate between +0.0 and -0.0.", TargetFrameworkMonikers.UapAot)]
-        [InlineData(0,  double.NegativeInfinity, -1.0,                     -0.0,                     0.0)]
-        [InlineData(1, -0.0,                     -3.0,                      double.NegativeInfinity, 0.0)]
-        [InlineData(2, -0.0,                     -1.0,                      double.NegativeInfinity, 0.0)]
-        public static void Pow_BlockedDueToTFS442050(int index, double x, double y, double expectedResult, double allowedVariance)
+        [InlineData(double.NegativeInfinity, -1.0,                     -0.0,                     0.0)]
+        [InlineData(-0.0,                     -3.0,                      double.NegativeInfinity, 0.0)]
+        [InlineData(-0.0,                     -1.0,                      double.NegativeInfinity, 0.0)]
+        public static void Pow_BlockedDueToTFS442050(double x, double y, double expectedResult, double allowedVariance)
         {
             AssertEqual(expectedResult, Math.Pow(x, y), allowedVariance);
         }
