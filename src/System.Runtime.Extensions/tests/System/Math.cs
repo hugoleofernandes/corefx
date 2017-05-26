@@ -4,6 +4,8 @@
 
 using Xunit;
 using Xunit.Sdk;
+using System.Reflection;
+using System.Collections.Generic;
 
 namespace System.Tests
 {
@@ -1315,6 +1317,12 @@ namespace System.Tests
         [InlineData(-0.0,                     -1.0,                      double.NegativeInfinity, 0.0)]
         public static void Pow_AotMetadataBug(double x, double y, double expectedResult, double allowedVariance)
         {
+
+            foreach (CustomAttributeData cad in MethodBase.GetCurrentMethod().CustomAttributes)
+            {
+                Console.WriteLine(cad.AttributeType);
+            }
+
             AssertEqual(expectedResult, Math.Pow(x, y), allowedVariance);
         }
 
