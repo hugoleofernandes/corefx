@@ -1342,7 +1342,7 @@ namespace System.Tests
                         ulong le = *((ulong*)&e);
                         if (la != le)
                         {
-                            Console.WriteLine("Row " + row + " Column " + column + " Mismatch");
+                            Console.WriteLine("Row " + row + " Column " + col + " Mismatch");
                         }
                     }
                 }
