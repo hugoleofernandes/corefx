@@ -6,6 +6,7 @@ using Xunit;
 using Xunit.Sdk;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace System.Tests
@@ -1319,36 +1320,34 @@ namespace System.Tests
             new object[] {2, -0.0,                     -1.0,                      double.NegativeInfinity, 0.0},
         };
 
+
+        [Theory]
+        [InlineData(1, -0.0, -3.0, double.NegativeInfinity, 0.0)]
+        public static void BugRepro(int index, double x, double y, double expectedResult, double allowedVariance)
+        {
+            MethodInfo method = (MethodInfo)(MethodBase.GetCurrentMethod());
+            CustomAttributeData cad = method.CustomAttributes.First();
+            ReadOnlyCollection<object> oarray = (ReadOnlyCollection<object>)(cad.ConstructorArguments[0].Value);
+            object shouldBeNegative0AsObject = oarray[1];
+            double shouldBeNegativeZero = (double)shouldBeNegative0AsObject;
+            ulong shouldBeNegativeZeroBits;
+            unsafe
+            {
+                shouldBeNegativeZeroBits = *((ulong*)&shouldBeNegativeZero);
+                if (shouldBeNegativeZeroBits != 0x8000000000000000LU)
+                {
+                    Console.WriteLine("! HEY!");
+                }
+            }
+            Console.WriteLine("! Bug repro done.");
+        }
+
         [Theory]
         [InlineData(0,  double.NegativeInfinity, -1.0,                     -0.0,                     0.0)]
         [InlineData(1, -0.0,                     -3.0,                      double.NegativeInfinity, 0.0)]
         [InlineData(2, -0.0,                     -1.0,                      double.NegativeInfinity, 0.0)]
         public static void Pow_AotMetadataBug(int index, double x, double y, double expectedResult, double allowedVariance)
         {
-            MethodInfo currentMethod =  (MethodInfo)MethodBase.GetCurrentMethod();
-            foreach (InlineDataAttribute id in currentMethod.GetCustomAttributes<InlineDataAttribute>())
-            {
-                object[] actual = ((object[][])(id.GetData(currentMethod).ToArray()))[0];
-                int row = (int)(actual[0]);
-                object[] expected = PowData[row];
-                for (int col = 1; col <= 4; col++)
-                {
-                    Console.WriteLine(actual[col].GetType());
-                    double a = (double)(actual[col]);
-                    double e = (double)(expected[col]);
-
-                    unsafe
-                    {
-                        ulong la = *((ulong*)&a);
-                        ulong le = *((ulong*)&e);
-                        if (la != le)
-                        {
-                            Console.WriteLine("Row " + row + " Column " + col + " Mismatch");
-                        }
-                    }
-                }
-            }
-
             AssertEqual(expectedResult, Math.Pow(x, y), allowedVariance);
         }
 
