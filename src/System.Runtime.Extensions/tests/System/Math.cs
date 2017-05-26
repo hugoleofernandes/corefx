@@ -4,8 +4,6 @@
 
 using Xunit;
 using Xunit.Sdk;
-using System.Reflection;
-using System.Collections.Generic;
 
 namespace System.Tests
 {
@@ -1318,38 +1316,8 @@ namespace System.Tests
             new object[] {2, -0.0,                     -1.0,                      double.NegativeInfinity, 0.0},
         };
 
-
         [Theory]
-        [InlineData(1, -0.0, -3.0, double.NegativeInfinity, 0.0)]
-        public static void BugReproForTFS442050(int index, double x, double y, double expectedResult, double allowedVariance)
-        {
-            //
-            // This is not a real test - it simply here to assist in repro'ing TFS442050 as it doesn't seem to want to repro in smaller test cases.
-            // Once it's fixed, this "test" can be deleted.
-            // 
-            MethodInfo method = (MethodInfo)(MethodBase.GetCurrentMethod());
-            foreach (CustomAttributeData cad in method.CustomAttributes)
-            {
-                if (cad.AttributeType != typeof(InlineDataAttribute))
-                    continue;
-
-                IList<CustomAttributeTypedArgument> catdArray = (IList<CustomAttributeTypedArgument>)(cad.ConstructorArguments[0].Value);
-                object shouldBeNegative0AsObject = catdArray[1].Value;
-                double shouldBeNegativeZero = (double)shouldBeNegative0AsObject;
-                ulong shouldBeNegativeZeroBits;
-                unsafe
-                {
-                    shouldBeNegativeZeroBits = *((ulong*)&shouldBeNegativeZero);
-                }
-                if (shouldBeNegativeZeroBits != 0x8000000000000000LU)
-                {
-                    Console.WriteLine("! HEY!");
-                }
-            }
-        }
-
-        [Theory]
-        [ActiveIssue("TFS 442050 - -0.0 transformed to +0.0 when read from native custom attribute metadata.", TargetFrameworkMonikers.UapAot)]
+        [ActiveIssue("TFS 442050 - Custom Attribute deduplication doesn't differentiate between +0.0 and -0.0.", TargetFrameworkMonikers.UapAot)]
         [InlineData(0,  double.NegativeInfinity, -1.0,                     -0.0,                     0.0)]
         [InlineData(1, -0.0,                     -3.0,                      double.NegativeInfinity, 0.0)]
         [InlineData(2, -0.0,                     -1.0,                      double.NegativeInfinity, 0.0)]
@@ -1359,7 +1327,7 @@ namespace System.Tests
         }
 
         [Theory]
-        [ActiveIssue("TFS 442050 - -0.0 transformed to +0.0 when read from native custom attribute metadata.", TargetFrameworkMonikers.UapAot)]
+        [ActiveIssue("TFS 442050 - Custom Attribute deduplication doesn't differentiate between +0.0 and -0.0.", TargetFrameworkMonikers.UapAot)]
         [InlineData(-1.0, double.PositiveInfinity, -0.0, 0.0)]
         [InlineData(-0.0, double.NegativeInfinity, -3.1415926535897932, CrossPlatformMachineEpsilon * 10)]    // expected: -(pi)
         [InlineData(-0.0, -1.0, -3.1415926535897932, CrossPlatformMachineEpsilon * 10)]    // expected: -(pi)
