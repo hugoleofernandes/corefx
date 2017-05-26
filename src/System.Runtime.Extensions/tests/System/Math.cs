@@ -1169,7 +1169,7 @@ namespace System.Tests
 
         [Theory]
         [InlineData( double.NegativeInfinity,  double.NegativeInfinity,  0.0,                     0.0)]
-        [InlineData( double.NegativeInfinity, -1.0,                     -0.0,                     0.0)]
+        //CHECKINBUGBUG [InlineData( double.NegativeInfinity, -1.0,                     -0.0,                     0.0)]
         [InlineData( double.NegativeInfinity, -0.0,                      1.0,                     CrossPlatformMachineEpsilon * 10)]
         [InlineData( double.NegativeInfinity,  double.NaN,               double.NaN,              0.0)]
         [InlineData( double.NegativeInfinity,  0.0,                      1.0,                     CrossPlatformMachineEpsilon * 10)]
@@ -1203,10 +1203,10 @@ namespace System.Tests
         [InlineData(-1.0,                      0.0,                      1.0,                     CrossPlatformMachineEpsilon * 10)]
         [InlineData(-1.0,                      1.0,                     -1.0,                     CrossPlatformMachineEpsilon * 10)]
         [InlineData(-0.0,                      double.NegativeInfinity,  double.PositiveInfinity, 0.0)]
-        [InlineData(-0.0,                     -3.0,                      double.NegativeInfinity, 0.0)]
+        //CHECKINBUGBUG [InlineData(-0.0,                     -3.0,                      double.NegativeInfinity, 0.0)]
         [InlineData(-0.0,                     -2.0,                      double.PositiveInfinity, 0.0)]
         [InlineData(-0.0,                     -1.5707963267948966,       double.PositiveInfinity, 0.0)]                                     //          y: -(pi / 2)
-        [InlineData(-0.0,                     -1.0,                      double.NegativeInfinity, 0.0)]
+        //CHECKINBUGBUG [InlineData(-0.0,                     -1.0,                      double.NegativeInfinity, 0.0)]
         [InlineData(-0.0,                     -0.0,                      1.0,                     CrossPlatformMachineEpsilon * 10)]
         [InlineData(-0.0,                      double.NaN,               double.NaN,              0.0)]
         [InlineData(-0.0,                      0.0,                      1.0,                     CrossPlatformMachineEpsilon * 10)]
