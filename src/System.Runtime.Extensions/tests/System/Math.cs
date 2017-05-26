@@ -575,7 +575,6 @@ namespace System.Tests
         [InlineData(-1.0,                      double.NaN,               double.NaN,          0.0)]
         [InlineData(-1.0,                      0.0,                     -1.5707963267948966,  CrossPlatformMachineEpsilon * 10)]    // expected: -(pi / 2)
         [InlineData(-1.0,                      1.0,                     -0.78539816339744831, CrossPlatformMachineEpsilon)]         // expected: -(pi / 4)
-        //CHECKINBUGUBG [InlineData(-1.0,                      double.PositiveInfinity, -0.0,                 0.0)]
         [InlineData(-0.99180624439366372,     -0.12775121753523991,     -1.6988976127008298,  CrossPlatformMachineEpsilon * 10)]    // expected: -(pi - log2(e))
         [InlineData(-0.99180624439366372,      0.12775121753523991,     -1.4426950408889634,  CrossPlatformMachineEpsilon * 10)]    // expected: -(log2(e))
         [InlineData(-0.98776594599273553,     -0.15594369476537447,     -1.7273790912166982,  CrossPlatformMachineEpsilon * 10)]    // expected: -(pi - sqrt(2))
@@ -600,9 +599,6 @@ namespace System.Tests
         [InlineData(-0.41078129050290870,      0.91173391478696510,     -0.42331082513074800, CrossPlatformMachineEpsilon)]         // expected: -(pi - e)
         [InlineData(-0.31296179620778659,     -0.94976571538163866,     -2.8232827674060026,  CrossPlatformMachineEpsilon * 10)]    // expected: -(pi - (1 / pi))
         [InlineData(-0.31296179620778659,      0.94976571538163866,     -0.31830988618379067, CrossPlatformMachineEpsilon)]         // expected: -(1 / pi)
-        // CHECKINBUGBUG [InlineData(-0.0,                      double.NegativeInfinity, -3.1415926535897932,  CrossPlatformMachineEpsilon * 10)]    // expected: -(pi)
-        // CHECKINBUGBUG [InlineData(-0.0,                     -1.0,                     -3.1415926535897932,  CrossPlatformMachineEpsilon * 10)]    // expected: -(pi)
-        // CHECKINBUGBUG [InlineData(-0.0,                     -0.0,                     -3.1415926535897932,  CrossPlatformMachineEpsilon * 10)]    // expected: -(pi)
         [InlineData(-0.0,                      double.NaN,               double.NaN,          0.0)]
         [InlineData(-0.0,                      0.0,                     -0.0,                 0.0)]
         [InlineData(-0.0,                      1.0,                     -0.0,                 0.0)]
@@ -616,7 +612,6 @@ namespace System.Tests
         [InlineData( double.NaN,               double.PositiveInfinity,  double.NaN,          0.0)]
         [InlineData( 0.0,                      double.NegativeInfinity,  3.1415926535897932,  CrossPlatformMachineEpsilon * 10)]     // expected:  (pi)
         [InlineData( 0.0,                     -1.0,                      3.1415926535897932,  CrossPlatformMachineEpsilon * 10)]     // expected:  (pi)
-        //CHECKINBUGBUG [InlineData( 0.0,                     -0.0,                      3.1415926535897932,  CrossPlatformMachineEpsilon * 10)]     // expected:  (pi)
         [InlineData( 0.0,                      double.NaN,               double.NaN,          0.0)]
         [InlineData( 0.0,                      0.0,                      0.0,                 0.0)]
         [InlineData( 0.0,                      1.0,                      0.0,                 0.0)]
@@ -657,6 +652,17 @@ namespace System.Tests
         [InlineData( double.PositiveInfinity,  0.0,                      1.5707963267948966,  CrossPlatformMachineEpsilon * 10)]     // expected:  (pi / 2)
         [InlineData( double.PositiveInfinity,  1.0,                      1.5707963267948966,  CrossPlatformMachineEpsilon * 10)]     // expected:  (pi / 2)
         public static void Atan2(double y, double x, double expectedResult, double allowedVariance)
+        {
+            AssertEqual(expectedResult, Math.Atan2(y, x), allowedVariance);
+        }
+
+        [Theory]
+        [InlineData(-1.0,                      double.PositiveInfinity, -0.0,                 0.0)]
+        [InlineData(-0.0,                      double.NegativeInfinity, -3.1415926535897932,  CrossPlatformMachineEpsilon * 10)]    // expected: -(pi)
+        [InlineData(-0.0,                     -1.0,                     -3.1415926535897932,  CrossPlatformMachineEpsilon * 10)]    // expected: -(pi)
+        [InlineData(-0.0,                     -0.0,                     -3.1415926535897932,  CrossPlatformMachineEpsilon * 10)]    // expected: -(pi)
+        [InlineData( 0.0,                     -0.0,                      3.1415926535897932,  CrossPlatformMachineEpsilon * 10)]     // expected:  (pi)
+        public static void Atan2_UapAotBug(double y, double x, double expectedResult, double allowedVariance)
         {
             AssertEqual(expectedResult, Math.Atan2(y, x), allowedVariance);
         }
