@@ -1312,6 +1312,13 @@ namespace System.Tests
             AssertEqual(expectedResult, Math.Pow(x, y), allowedVariance);
         }
 
+        public static object[][] PowData =
+        {
+            new object[] {0, double.NegativeInfinity, -1.0,                     -0.0,                     0.0},
+            new object[] {1, -0.0,                     -3.0,                      double.NegativeInfinity, 0.0},
+            new object[] {2, -0.0,                     -1.0,                      double.NegativeInfinity, 0.0},
+        };
+
         [Theory]
         [InlineData(0,  double.NegativeInfinity, -1.0,                     -0.0,                     0.0)]
         [InlineData(1, -0.0,                     -3.0,                      double.NegativeInfinity, 0.0)]
@@ -1322,6 +1329,7 @@ namespace System.Tests
             foreach (InlineDataAttribute id in currentMethod.GetCustomAttributes<InlineDataAttribute>())
             {
                 object[] args = ((object[][])(id.GetData(currentMethod).ToArray()))[0];
+                object[] expected = PowData[((int)(args[0]))];
                 if (((int)(args[0])) == index)
                 {
                     double x0 = (double)(args[1]);
@@ -1329,13 +1337,13 @@ namespace System.Tests
                     double expectedResult0 = (double)(args[3]);
                     double allowedVariance0 = (double)(args[4]);
 
-                    if (x != x0)
+                    if (expected[1] != args[1])
                         Console.WriteLine(index + " Mismatched x");
-                    if (y != y0)
+                    if (expected[2] != args[2])
                         Console.WriteLine(index + " Mismatched y");
-                    if (expectedResult != expectedResult0)
+                    if (expected[3] != args[3])
                         Console.WriteLine(index + " Mismatched expectedResult");
-                    if (allowedVariance != allowedVariance0)
+                    if (expected[4] != args[4])
                         Console.WriteLine(index + " Mismatched allowedVariance");
                 }
             }
