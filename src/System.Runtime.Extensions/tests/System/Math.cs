@@ -1333,8 +1333,8 @@ namespace System.Tests
                 object[] expected = PowData[row];
                 for (int col = 1; col <= 4; col++)
                 {
-                    double a = (double)(actual[0]);
-                    double e = (double)(expected[0]);
+                    double a = (double)(actual[col]);
+                    double e = (double)(expected[col]);
 
                     unsafe
                     {
