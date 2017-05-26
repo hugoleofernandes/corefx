@@ -6,6 +6,7 @@ using Xunit;
 using Xunit.Sdk;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace System.Tests
 {
@@ -1312,15 +1313,31 @@ namespace System.Tests
         }
 
         [Theory]
-        [InlineData( double.NegativeInfinity, -1.0,                     -0.0,                     0.0)]
-        [InlineData(-0.0,                     -3.0,                      double.NegativeInfinity, 0.0)]
-        [InlineData(-0.0,                     -1.0,                      double.NegativeInfinity, 0.0)]
-        public static void Pow_AotMetadataBug(double x, double y, double expectedResult, double allowedVariance)
+        [InlineData(0,  double.NegativeInfinity, -1.0,                     -0.0,                     0.0)]
+        [InlineData(1, -0.0,                     -3.0,                      double.NegativeInfinity, 0.0)]
+        [InlineData(2, -0.0,                     -1.0,                      double.NegativeInfinity, 0.0)]
+        public static void Pow_AotMetadataBug(int index, double x, double y, double expectedResult, double allowedVariance)
         {
-
-            foreach (CustomAttributeData cad in MethodBase.GetCurrentMethod().CustomAttributes)
+            MethodInfo currentMethod =  (MethodInfo)MethodBase.GetCurrentMethod();
+            foreach (InlineDataAttribute id in currentMethod.GetCustomAttributes<InlineDataAttribute>())
             {
-                Console.WriteLine(cad.AttributeType);
+                object[] args = id.GetData(currentMethod).ToArray();
+                if (((int)(args[0])) == index)
+                {
+                    double x0 = (double)(args[1]);
+                    double y0 = (double)(args[2]);
+                    double expectedResult0 = (double)(args[3]);
+                    double allowedVariance0 = (double)(args[4]);
+
+                    if (x != x0)
+                        Console.WriteLine(index + " Mismatched x");
+                    if (y != y0)
+                        Console.WriteLine(index + " Mismatched y");
+                    if (expectedResult != expectedResult0)
+                        Console.WriteLine(index + " Mismatched expectedResult");
+                    if (allowedVariance != allowedVariance0)
+                        Console.WriteLine(index + " Mismatched allowedVariance");
+                }
             }
 
             AssertEqual(expectedResult, Math.Pow(x, y), allowedVariance);
