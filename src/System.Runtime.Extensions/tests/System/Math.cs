@@ -1333,6 +1333,7 @@ namespace System.Tests
                 object[] expected = PowData[row];
                 for (int col = 1; col <= 4; col++)
                 {
+                    Console.WriteLine(actual[col].GetType());
                     double a = (double)(actual[col]);
                     double e = (double)(expected[col]);
 
