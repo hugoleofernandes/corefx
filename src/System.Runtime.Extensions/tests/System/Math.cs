@@ -1309,13 +1309,6 @@ namespace System.Tests
             AssertEqual(expectedResult, Math.Pow(x, y), allowedVariance);
         }
 
-        public static object[][] PowData =
-        {
-            new object[] {0, double.NegativeInfinity, -1.0,                     -0.0,                     0.0},
-            new object[] {1, -0.0,                     -3.0,                      double.NegativeInfinity, 0.0},
-            new object[] {2, -0.0,                     -1.0,                      double.NegativeInfinity, 0.0},
-        };
-
         [Theory]
         [ActiveIssue("TFS 442050 - Custom Attribute deduplication doesn't differentiate between +0.0 and -0.0.", TargetFrameworkMonikers.UapAot)]
         [InlineData(0,  double.NegativeInfinity, -1.0,                     -0.0,                     0.0)]
