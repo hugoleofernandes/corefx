@@ -1326,17 +1326,22 @@ namespace System.Tests
         public static void BugRepro(int index, double x, double y, double expectedResult, double allowedVariance)
         {
             MethodInfo method = (MethodInfo)(MethodBase.GetCurrentMethod());
-            CustomAttributeData cad = method.CustomAttributes.First();
-            ReadOnlyCollection<object> oarray = (ReadOnlyCollection<object>)(cad.ConstructorArguments[0].Value);
-            object shouldBeNegative0AsObject = oarray[1];
-            double shouldBeNegativeZero = (double)shouldBeNegative0AsObject;
-            ulong shouldBeNegativeZeroBits;
-            unsafe
+            foreach (CustomAttributeData cad in method.CustomAttributes)
             {
-                shouldBeNegativeZeroBits = *((ulong*)&shouldBeNegativeZero);
-                if (shouldBeNegativeZeroBits != 0x8000000000000000LU)
+                if (cad.AttributeType != typeof(InlineDataAttribute))
+                    continue;
+
+                ReadOnlyCollection<object> oarray = (ReadOnlyCollection<object>)(cad.ConstructorArguments[0].Value);
+                object shouldBeNegative0AsObject = oarray[1];
+                double shouldBeNegativeZero = (double)shouldBeNegative0AsObject;
+                ulong shouldBeNegativeZeroBits;
+                unsafe
                 {
-                    Console.WriteLine("! HEY!");
+                    shouldBeNegativeZeroBits = *((ulong*)&shouldBeNegativeZero);
+                    if (shouldBeNegativeZeroBits != 0x8000000000000000LU)
+                    {
+                        Console.WriteLine("! HEY!");
+                    }
                 }
             }
             Console.WriteLine("! Bug repro done.");
