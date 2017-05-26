@@ -1331,6 +1331,9 @@ namespace System.Tests
                 if (cad.AttributeType != typeof(InlineDataAttribute))
                     continue;
 
+                CustomAttributeTypedArgument cta = cad.ConstructorArguments[0];
+                Console.WriteLine(cta.ArgumentType);
+
                 ReadOnlyCollection<object> oarray = (ReadOnlyCollection<object>)(cad.ConstructorArguments[0].Value);
                 object shouldBeNegative0AsObject = oarray[1];
                 double shouldBeNegativeZero = (double)shouldBeNegative0AsObject;
