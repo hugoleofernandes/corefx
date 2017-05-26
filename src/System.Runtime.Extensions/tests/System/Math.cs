@@ -1321,7 +1321,7 @@ namespace System.Tests
             MethodInfo currentMethod =  (MethodInfo)MethodBase.GetCurrentMethod();
             foreach (InlineDataAttribute id in currentMethod.GetCustomAttributes<InlineDataAttribute>())
             {
-                object[] args = id.GetData(currentMethod).ToArray();
+                object[] args = ((object[][])(id.GetData(currentMethod).ToArray())[0];
                 if (((int)(args[0])) == index)
                 {
                     double x0 = (double)(args[1]);
