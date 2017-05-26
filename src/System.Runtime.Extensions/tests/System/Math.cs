@@ -1328,23 +1328,23 @@ namespace System.Tests
             MethodInfo currentMethod =  (MethodInfo)MethodBase.GetCurrentMethod();
             foreach (InlineDataAttribute id in currentMethod.GetCustomAttributes<InlineDataAttribute>())
             {
-                object[] args = ((object[][])(id.GetData(currentMethod).ToArray()))[0];
-                object[] expected = PowData[((int)(args[0]))];
-                if (((int)(args[0])) == index)
+                object[] actual = ((object[][])(id.GetData(currentMethod).ToArray()))[0];
+                int row = (int)(actual[0]);
+                object[] expected = PowData[row];
+                for (int col = 1; col <= 4; col++)
                 {
-                    double x0 = (double)(args[1]);
-                    double y0 = (double)(args[2]);
-                    double expectedResult0 = (double)(args[3]);
-                    double allowedVariance0 = (double)(args[4]);
+                    double a = (double)(actual[0]);
+                    double e = (double)(expected[0]);
 
-                    if (expected[1] != args[1])
-                        Console.WriteLine(index + " Mismatched x");
-                    if (expected[2] != args[2])
-                        Console.WriteLine(index + " Mismatched y");
-                    if (expected[3] != args[3])
-                        Console.WriteLine(index + " Mismatched expectedResult");
-                    if (expected[4] != args[4])
-                        Console.WriteLine(index + " Mismatched allowedVariance");
+                    unsafe
+                    {
+                        ulong la = *((ulong*)&a);
+                        ulong le = *((ulong*)&e);
+                        if (la != le)
+                        {
+                            Console.WriteLine("Row " + row + " Column " + column + " Mismatch");
+                        }
+                    }
                 }
             }
 
